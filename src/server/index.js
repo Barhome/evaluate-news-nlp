@@ -4,9 +4,25 @@ const mockAPIResponse = require('./mockAPI.js')
 
 const app = express()
 
+
+/* Middleware*/
+//including body-parser
+const bodyParser = require("body-parser");
+//Here we are configuring express to use body-parser as middle-ware.
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// Cors for cross origin allowance
+//including cors
+const cors = require("cors");
+//connecting cors
+app.use(cors());
+
 app.use(express.static('dist'))
 
 console.log(__dirname)
+
+
 
 app.get('/', function (req, res) {
     res.sendFile('dist/index.html')
