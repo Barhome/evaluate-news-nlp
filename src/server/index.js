@@ -1,6 +1,8 @@
+const projectdata={}
 var path = require('path')
 const express = require('express')
 const mockAPIResponse = require('./mockAPI.js')
+const fetch = require('node-fetch')
 
 const app = express()
 
@@ -37,3 +39,12 @@ app.listen(3000, function () {
 app.get('/test', function (req, res) {
     res.send(mockAPIResponse)
 })
+
+// creating post route for user url
+
+function postUserUrl(req,res){
+    console.log(req.body);
+    projectdata.url=req.body.Userurl;
+    console.log(projectdata);
+}
+app.post('/postUserUrl', postUserUrl);
