@@ -1,3 +1,10 @@
+//settin up environment variable  
+const dotenv = require('dotenv');
+dotenv.config();
+
+// declare api credentials for setting up  environment variable  
+const application_key = process.env.API_KEY;
+
 const projectData={}
 let userUrl=''
 var path = require('path')
@@ -6,6 +13,9 @@ const mockAPIResponse = require('./mockAPI.js')
 const fetch = require('node-fetch')
 
 const app = express()
+
+
+
 
 
 /* Middleware*/
@@ -59,7 +69,7 @@ const getSementicAnalysis = async function (url = "") {
 function postUserUrl(req,res){
     console.log(req.body);
     userUrl=req.body.userUrl;
-    const myUrl=`https://api.meaningcloud.com/sentiment-2.1?key=3c4597bdfc4ed0fe6af3ecf7be791a85&of=json&url=${userUrl}&lang=en`;
+    const myUrl=`https://api.meaningcloud.com/sentiment-2.1?key=${application_key}&of=json&url=${userUrl}&lang=en`;
     getSementicAnalysis(myUrl).then((data)=>
     {
       console.log(data.score_tag);
