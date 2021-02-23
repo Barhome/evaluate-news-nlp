@@ -1,4 +1,5 @@
-const projectdata={}
+const projectData={}
+let userUrl=''
 var path = require('path')
 const express = require('express')
 const mockAPIResponse = require('./mockAPI.js')
@@ -36,15 +37,41 @@ app.listen(3000, function () {
     console.log('Example app listening on port 3000!')
 })
 
-app.get('/test', function (req, res) {
-    res.send(mockAPIResponse)
-})
+// app.get('/test', function (req, res) {
+//     res.send(mockAPIResponse)
+// })
+
+//create function to return data from sementic analysis api 
+
+const getSementicAnalysis = async function (url = "") {
+  const request = await fetch(url);
+  try {
+    const dataApi = await request.json();
+    //console.log(dataApi);
+    return dataApi;
+  } catch (error) {
+    console.log(`error:${error}`);
+  }
+};
 
 // creating post route for user url
 
 function postUserUrl(req,res){
     console.log(req.body);
-    projectdata.url=req.body.Userurl;
-    console.log(projectdata);
+    userUrl=req.body.userUrl;
+    const myUrl=`https://api.meaningcloud.com/sentiment-2.1?key=3c4597bdfc4ed0fe6af3ecf7be791a85&of=json&url=${userUrl}&lang=en`;
+    getSementicAnalysis(myUrl).then((data)=>
+    {
+      console.log(data.score_tag);
+      projectData.score_tag=data.score_tag;
+      console.log(projectData);
+    });
+      
 }
 app.post('/postUserUrl', postUserUrl);
+
+app.get('/getServerEndPoint', function (req, res) {
+  res.send(projectData)
+})
+
+
