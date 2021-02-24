@@ -1,3 +1,31 @@
+// create a function to display message to the view
+const displayMessage = function (data) {
+  let message = "";
+  switch (data) {
+    case "P+":
+      message = "The review tone is strong positive";
+      break;
+    case "P":
+      message = "The review tone is positive";
+      break;
+    case "NEU":
+      message = "The review tone is neutral";
+      break;
+    case "N":
+      message = "The review tone is negative";
+      break;
+    case "N+":
+      message = "The review tone is strong negative";
+      break;
+    case "NONE":
+      message = "There is no review tone";
+      break;
+    default:
+      message = "Failed to show review due to system error";
+  }
+  return message;
+};
+
 // create function to Post Data only without returning anything
 
 const postUserUrlData = async function (url = "", data = {}) {
@@ -7,18 +35,25 @@ const postUserUrlData = async function (url = "", data = {}) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-};
-
-// create function to Get Data from server
-const getServerData = async function (url = "") {
-  const response = await fetch(url);
   try {
-    const dataServer = response.json();
-    return dataServer;
+    const returnedData = await response.json();
+    console.log(returnedData);
+    return returnedData;
   } catch (error) {
     console.log(`error:${error}`);
   }
 };
+
+// // create function to Get Data from server
+// const getServerData = async function (url = "") {
+//   const response = await fetch(url);
+//   try {
+//     const dataServer = response.json();
+//     return dataServer;
+//   } catch (error) {
+//     console.log(`error:${error}`);
+//   }
+// };
 
 function handleSubmit(event) {
   event.preventDefault();
@@ -33,36 +68,22 @@ function handleSubmit(event) {
   }
 
   // call the function to post data to server
-  else {
+  else
     postUserUrlData("http://localhost:3000/postUserUrl", {
       userUrl: urlAddress,
     })
-      .then(() => getServerData("http://localhost:3000/getServerEndPoint"))
-      .then((data) => {
-        console.log(data);
-        if (data.score_tag == "P+")
-          document.getElementById("results").innerHTML =
-            "The review tone is strong positive";
-        else if (data.score_tag == "P")
-          document.getElementById("results").innerHTML =
-            "The review tone is  positive";
-        else if (data.score_tag == "NEU")
-          document.getElementById("results").innerHTML =
-            "The review tone is neutral";
-        else if (data.score_tag == "N")
-          document.getElementById("results").innerHTML =
-            "The review tone is negative";
-        else if (data.score_tag == "N+")
-          document.getElementById("results").innerHTML =
-            "The review tone is strong negative";
-        else if (data.score_tag == "NONE")
-          document.getElementById("results").innerHTML =
-            "There is no review tone";
-        // else
-        //   document.getElementById("results").innerHTML =
-        //     "Failed to show review due to system error";
-      })
-      .catch((error) => console.log(error));
-  }
+      .then(
+        (data) =>
+          (document.getElementById("results").innerHTML = displayMessage(
+            data.score_tag
+          ))
+      )
+      .catch(
+        (error) =>
+          (document.getElementById(
+            "results"
+          ).innerHTML = `Couldn't Fetch Data for connection reasons ${error}`)
+      );
 }
-export { handleSubmit };
+
+export { handleSubmit, displayMessage };

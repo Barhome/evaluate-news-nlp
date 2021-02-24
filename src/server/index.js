@@ -56,9 +56,9 @@ app.listen(3000, function () {
 const getSementicAnalysis = async function (url = "") {
   const request = await fetch(url);
   try {
-    const dataApi = await request.json();
+    const data = await request.json();
     //console.log(dataApi);
-    return dataApi;
+    return data;
   } catch (error) {
     console.log(`error:${error}`);
   }
@@ -66,7 +66,7 @@ const getSementicAnalysis = async function (url = "") {
 
 // creating post route for user url
 
-function postUserUrl(req,res){
+const postUserUrl =  async function (req,res){
     console.log(req.body);
     userUrl=req.body.userUrl;
     const myUrl=`https://api.meaningcloud.com/sentiment-2.1?key=${application_key}&of=json&url=${userUrl}&lang=en`;
@@ -74,14 +74,14 @@ function postUserUrl(req,res){
     {
       console.log(data.score_tag);
       projectData.score_tag=data.score_tag;
-      console.log(projectData);
+      res.send(projectData)
     });
       
 }
 app.post('/postUserUrl', postUserUrl);
 
-app.get('/getServerEndPoint', function (req, res) {
-  res.send(projectData)
-})
+// app.get('/getServerEndPoint', function (req, res) {
+//   res.send(projectData)
+// })
 
 
