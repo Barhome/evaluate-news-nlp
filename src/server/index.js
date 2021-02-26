@@ -74,6 +74,10 @@ const postUserUrl =  async function (req,res){
     {
       console.log(data.score_tag);
       projectData.score_tag=data.score_tag;
+      projectData.agreement=data.agreement;
+      projectData.subjectivity=data.subjectivity;
+      projectData.confidence=data.confidence;
+      projectData.irony=data.irony;
       res.send(projectData)
     });
       

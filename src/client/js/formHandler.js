@@ -3,30 +3,33 @@ const displayMessage = function (data) {
   let message = "";
   switch (data) {
     case "P+":
-      message = "The review tone is strong positive";
+      message = "The review tone is strong POSITIVE";
       break;
     case "P":
-      message = "The review tone is positive";
+      message = "The review tone is POSITIVE";
       break;
     case "NEU":
-      message = "The review tone is neutral";
+      message = "The review tone is NETRAL";
       break;
     case "N":
-      message = "The review tone is negative";
+      message = "The review tone is NEGATIVE";
       break;
     case "N+":
-      message = "The review tone is strong negative";
+      message = "The review tone is strong NEGATIVE";
       break;
     case "NONE":
-      message = "There is no review tone";
+      message = "There is no REVIEW TONE";
       break;
-    default:
-      message = "Failed to show review due to system error";
+    default: {
+      message =
+        "Failed to show review due to system error or evaluting wrong web address";
+      document.getElementById("results-analysis").classList.add("hide");
+    }
   }
   return message;
 };
 
-// create function to Post Data only without returning anything
+// create function to Post Data
 
 const postUserUrlData = async function (url = "", data = {}) {
   const response = await fetch(url, {
@@ -64,6 +67,9 @@ function handleSubmit(event) {
   // check url or not
   if (!Client.checkForUrl(urlAddress)) {
     alert("You have to Enter a valid url with HTTP protocol");
+    //updating the dom in case the customer entered in valid url in middle of entering valid ones.
+    document.getElementById("results-analysis").classList.add("hide");
+    document.getElementById("results").innerHTML = "";
     return;
   }
 
@@ -72,18 +78,35 @@ function handleSubmit(event) {
     postUserUrlData("http://localhost:3000/postUserUrl", {
       userUrl: urlAddress,
     })
-      .then(
-        (data) =>
-          (document.getElementById("results").innerHTML = displayMessage(
-            data.score_tag
-          ))
-      )
-      .catch(
-        (error) =>
-          (document.getElementById(
-            "results"
-          ).innerHTML = `Couldn't Fetch Data for connection reasons ${error}`)
-      );
+      .then((data) => {
+        document.getElementById("results-analysis").classList.remove("hide"); //showing dom element in case of fetching success
+        document.getElementById("results").innerHTML = displayMessage(
+          data.score_tag
+        );
+        document.getElementById(
+          "agreement-level"
+        ).innerHTML = `Agreement Status: ${
+          data.agreement === "AGREEMENT" ? "AGREED" : "DISAGREED"
+        }`;
+        document.getElementById(
+          "subjectivity-level"
+        ).innerHTML = `Subjectivity Status: ${
+          data.subjectivity === "OBJECTIVE" ? "OBJECTIVE" : "SUBJECTIVE"
+        }`;
+        document.getElementById(
+          "confidence-level"
+        ).innerHTML = `Confidence Status: ${data.confidence}% CONFIDENT`;
+        document.getElementById("irony-level").innerHTML = `Irony Status: ${
+          data.irony === "IRONIC" ? "IRONIC" : "NONIRONIC"
+        }`;
+      })
+
+      .catch((error) => {
+        document.getElementById(
+          "results"
+        ).innerHTML = `Couldn't Fetch Data for connection reasons ${error}`;
+        document.getElementById("results-analysis").classList.add("hide"); //hiding dom elements in case of failed fetching
+      });
 }
 
 export { handleSubmit, displayMessage };
